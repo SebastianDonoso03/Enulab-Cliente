@@ -1,14 +1,26 @@
-import React from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getMenu } from '../services/menuService.js'
 
 const RestaurantMenu = () => {
-  const { id } = useParams();
+  const restaurantId = localStorage.getItem("selectedRestaurantId");
+/*   const [selectedMenu, setSelectedMenu] = useState(null);
+  const [showModal, setShowModal] = useState(false); */
+  const [menus, setMenus] = useState([]);
+  
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const menusData = await getMenu(restaurantId);
+        setMenus(menusData);
+      } catch (error) {
+        console.error("Error al cargar los menús:", error);
+      }
+    };
+    fetchMenus();
+  }, [restaurantId]);
 
-  const restaurant = {
-    id: id,
-    name: "ZUUZ",
-    menu: ["Plato 1", "Plato 2", "Plato 3"],
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -19,13 +31,13 @@ const RestaurantMenu = () => {
             🔙 Volver al Inicio
           </Link>
           <div className="space-x-6">
-            <Link to={`/restaurant/${id}`} className="text-gray-700 hover:text-blue-500 font-semibold">
+            <Link  className="text-gray-700 hover:text-blue-500 font-semibold">
               Menú
             </Link>
-            <Link to={`/restaurant/${id}/reservations`} className="text-gray-700 hover:text-blue-500 font-semibold">
+            <Link to="/reserva" className="text-gray-700 hover:text-blue-500 font-semibold">
               Reservaciones
             </Link>
-            <Link to={`/restaurant/${id}/comments`} className="text-gray-700 hover:text-blue-500 font-semibold">
+            <Link  className="text-gray-700 hover:text-blue-500 font-semibold">
               Comentarios
             </Link>
           </div>
@@ -35,24 +47,17 @@ const RestaurantMenu = () => {
 
       {/* Contenido Principal */}
       <div className="pt-24 text-center">
-        <h1 className="text-4xl font-bold text-gray-800">{restaurant.name}</h1>
-
+        <h1 className="text-4xl font-bold text-gray-800">Aqui va el menu</h1>
         {/* Menú */}
-        {window.location.pathname === `/restaurant/${id}` && (
-          <div className="mt-6 p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">🍽️ Menú</h2>
-            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {restaurant.menu.map((item, index) => (
-                <li key={index} className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-                  <h3 className="font-semibold text-lg">{item}</h3>
-                </li>
-              ))}
-            </ul>
+        <br></br>
+        {menus.map((menu) => (
+        <div className="menu-item d-flex mb-3" key={menu.id}>
+          <div className="menu-description flex-grow-1">
+            <h3>{menu.name}</h3>
+            <p>{menu.description}</p>
           </div>
-        )}
-
-        {/* Secciones Anidadas */}
-        <Outlet />
+        </div>
+      ))}
       </div>
     </div>
   );

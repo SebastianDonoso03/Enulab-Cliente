@@ -1,47 +1,86 @@
-import React, { useState } from "react";
-import { Button, Input, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { createReserve } from '../services/reserveService'
 
 const Reservations = () => {
+
+  const navigate = useNavigate()
+  const [restaurantId, setRestaurantId] = useState(null)
+
+  useEffect(() => {
+    const storedRestaurantId = localStorage.getItem("selectedRestaurantId")
+    console.log("ID del restaurante", storedRestaurantId)
+    
+    if(storedRestaurantId){
+      setRestaurantId(storedRestaurantId)
+    } else {
+      console.error('No se encontro el restauranteId')
+      navigate('/')
+    }
+  }, [navigate])
+
   const [formData, setFormData] = useState({
     name: "",
-    phone: "",
     date: "",
-    time: "",
-    guests: 1,
-    notas: "",
-  });
+    hour: "",
+    numcontact: "",
+    guests: "",
+    note: "",
+    code: ""
+  })
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   };
 
-  const handleReservation = () => {
-    if (!formData.name || !formData.phone || !formData.date || !formData.time || !formData.guests) {
-      message.error("Por favor, complete todos los campos.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!restaurantId) {
+      console.error("No se puede crear sin la ID del restaurante");
       return;
     }
-    message.success("Reserva realizada con éxito. ¡Te esperamos!");
-    console.log("Reserva enviada:", formData);
-    setFormData({ name: "", phone: "", date: "", time: "", guests: 1 });
+    const randomCode = Math.random().toString(36).substring(2, 12).toUpperCase();
+    const newFormData = { ...formData, code: randomCode };
+    console.log("Datos enviados al backend:", newFormData);
+    for (const key in newFormData) {
+      if (!newFormData[key]) {
+        console.error(`El campo ${key} está vacío`);
+        return;
+      }
+    }
+
+    try {
+      const createdReserve = await createReserve(restaurantId, newFormData);
+      console.log("Reserva creada", createdReserve);
+      navigate("/restaurant");
+    } catch (error) {
+      console.error("Error al crear la reserva", error.response?.data || error.message);
+    }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-6">
       <h2 className="text-2xl font-bold text-center mb-4">📅 Reservaciones</h2>
-      <p className="text-gray-600 text-center mb-4">
-        El valor de reserva es de <strong>$20</strong> para asegurar tu mesa.
-      </p>
-      <div className="space-y-4">
-        <Input name="name" placeholder="Nombre completo" value={formData.name} onChange={handleChange} />
-        <Input name="phone" placeholder="Teléfono" value={formData.phone} onChange={handleChange} />
-        <Input name="date" type="date" value={formData.date} onChange={handleChange} />
-        <Input name="time" type="time" value={formData.time} onChange={handleChange} />
-        <Input name="guests" type="number" min={1} value={formData.guests} onChange={handleChange} />
-        <Input name="notas" placeholder="Notas adicionales" value={formData.notas} onChange={handleChange} />
-        <Button type="primary" block onClick={handleReservation}>
-          Confirmar Reserva
-        </Button>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <p>Nombre Completo</p>
+          <input type="text" name="name" placeholder="Nombre completo" onChange={handleChange} />
+          <p>Fecha</p>
+          <input name="date" type="date" onChange={handleChange} />
+          <p>Hora</p>
+          <input name="hour" type="time" onChange={handleChange} />
+          <p>Telefono</p>
+          <input name="numcontact" placeholder="Teléfono" onChange={handleChange} />
+          <p>Numero de personas</p>
+          <input name="guests" type="number" min={1} onChange={handleChange} />
+          <p>Notas</p>
+          <input name="note" placeholder="Notas adicionales" onChange={handleChange} /> <br></br>
+          <button type="submit">
+            Confirmar Reserva
+          </button>
       </div>
+      </form>
     </div>
   );
 };

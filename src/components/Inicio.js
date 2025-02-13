@@ -1,14 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link as ScrollLink } from "react-scroll"; // Para el desplazamiento suave
-import { Link as RouterLink } from "react-router-dom"; // Para la navegación entre páginas
+import { useNavigate } from "react-router-dom"; // Para la navegación entre páginas
 import { Button } from "antd";
 import backgroundImage from "../images/restaurante.jpg";
 import logo from "../images/logo.png";
+import { getRestaurant } from "../services/restaurantService";
 
 const Dashboard = () => {
-  useEffect(() => {
+  const navigate = useNavigate()
+    useEffect(() => {
     document.title = "ENULAB";
+    fetRestaurantes()
   }, []);
+  const [restaurantes, setRestaurantes] = useState([]);
+  const fetRestaurantes = async ()=>{
+    try{
+      const data = await getRestaurant();
+      setRestaurantes(data)
+    }
+    catch(error){
+      console.error('Error al obtener', error.message)
+    }
+  }
+
+  const handleGestionClick = (restaurante) => {
+    // Guardamos el restaurantId en localStorage
+    localStorage.setItem("selectedRestaurantId", restaurante.id);
+    // Redirigimos a la página de empleados
+    navigate("/restaurant");
+  };
 
   return (
     <div>
@@ -65,51 +85,28 @@ const Dashboard = () => {
           Nuestros restaurantes Asociados
         </h2>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-4 shadow-lg">
-            <img
-              src={"../images/logo.png"}
-              alt="ZUUZ"
-              className="w-full h-48 object-cover rounded-md"
-            />
-            <h3 className="mt-2 font-bold">ZUUZ</h3>
-            <p className="text-gray-600">Restaurante de comida china.</p>
-            <RouterLink
-              to="/restaurant/1"
-              className="text-blue-600 hover:text-blue-800"
-            >
-              Ver Menú
-            </RouterLink>
+          
+            {restaurantes.length === 0 ? (
+              <p>No hay restaurantes</p>
+            ): (
+              restaurantes.map((rest) => (
+                <div key={rest.id} className="bg-white p-4 shadow-lg">
+                  <img
+                    src={"../images/logo.png"}
+                    alt="ZUUZ"
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                    <h3 className="mt-2 font-bold">{rest.name}</h3>
+                    <p className="text-gray-600">{rest.descripcion}</p>
+                    <button
+                      onClick={() => handleGestionClick(rest)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                    Ver Menú
+                  </button>
           </div>
-          <div className="bg-white p-4 shadow-lg">
-            <img
-              src={"../images/logo.png"}
-              alt="MICO"
-              className="w-full h-48 object-cover rounded-md"
-            />
-            <h3 className="mt-2 font-bold">MICO</h3>
-            <p className="text-gray-600">Restaurante de comida ecuatoriana.</p>
-            <RouterLink
-              to="/restaurant/2"
-              className="text-blue-600 hover:text-blue-800"
-            >
-              Ver Menú
-            </RouterLink>
-          </div>
-          <div className="bg-white p-4 shadow-lg">
-            <img
-              src={"../images/logo.png"}
-              alt="UMUN"
-              className="w-full h-48 object-cover rounded-md"
-            />
-            <h3 className="mt-2 font-bold">UMUN</h3>
-            <p className="text-gray-600">Restaurante de comida italiana.</p>
-            <RouterLink
-              to="/restaurant/3"
-              className="text-blue-600 hover:text-blue-800"
-            >
-              Ver Menú
-            </RouterLink>
-          </div>
+              ))
+            )}
         </div>
       </section>
 
