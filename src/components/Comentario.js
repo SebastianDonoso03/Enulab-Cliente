@@ -1,17 +1,58 @@
-import React, { useState } from "react";
-import { Button, Input, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createComment } from "../services/comentarioService";
 
 const Comments = () => {
-  const [comment, setComment] = useState("");
+  const navigate = useNavigate();
+  const [restauranteId, setRestaurantId] = useState(null);
+  const [formData, setFormData] = useState({
+    rating: 0,
+    date: "",
+    content: "",
+  });
 
-  const handleSubmitComment = () => {
-    if (!comment) {
-      message.error("Por favor, escribe un comentario.");
+  useEffect(()=> {
+    const storedRestaurantId = localStorage.getItem('selectedRestaurantId')
+    console.log('Id del restaurante', storedRestaurantId)
+
+    if(storedRestaurantId){
+      setRestaurantId(storedRestaurantId)
+    }else{
+      console.error('No se encontro el restaurante')
+      navigate('/')
+    }
+  }, [navigate])
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRatingChange = (rating) => {
+    setFormData({ ...formData, rating });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!restauranteId) {
+      console.error("No se encontró el restaurante");
       return;
     }
-    message.success("¡Gracias por tu comentario!");
-    console.log("Comentario enviado:", comment);
-    setComment("");
+
+    for (const key in formData) {
+      if (!formData[key]) {
+        console.error(`El campo ${key} está vacío`);
+        return;
+      }
+    }
+
+    try {
+      const createdComment = await createComment(restauranteId, formData);
+      console.log("Comentario Creado", createdComment);
+      navigate('/restaurant')
+    } catch (error) {
+      console.log("Error al crear el comentario", error.response?.data || error.message);
+    }
   };
 
   return (
@@ -20,10 +61,47 @@ const Comments = () => {
       <p className="text-gray-600 text-center mb-4">
         Comparte tu experiencia y ayúdanos a mejorar.
       </p>
-      <Input.TextArea rows={4} placeholder="Escribe tu comentario aquí..." value={comment} onChange={(e) => setComment(e.target.value)} />
-      <Button type="primary" block className="mt-4" onClick={handleSubmitComment}>
-        Enviar Comentario
-      </Button>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-700">Calificación:</label>
+          <div className="flex space-x-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`cursor-pointer text-2xl ${
+                  formData.rating >= star ? "text-yellow-500" : "text-gray-300"
+                }`}
+                onClick={() => handleRatingChange(star)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Comentario:</label>
+          <textarea
+            name="content"
+            value={formData.content}
+            onChange={handleChange}
+            placeholder="Ingresa tu comentario"
+            className="w-full p-2 border border-gray-300 rounded"
+          ></textarea>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Fecha:</label>
+          <input
+            name="date"
+            type="date"
+            value={formData.date}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+          Enviar Comentario
+        </button>
+      </form>
     </div>
   );
 };

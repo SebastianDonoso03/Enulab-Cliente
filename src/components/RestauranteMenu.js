@@ -37,7 +37,7 @@ const RestaurantMenu = () => {
             <Link to="/reserva" className="text-gray-700 hover:text-blue-500 font-semibold">
               Reservaciones
             </Link>
-            <Link  className="text-gray-700 hover:text-blue-500 font-semibold">
+            <Link  to="/comentario" className="text-gray-700 hover:text-blue-500 font-semibold">
               Comentarios
             </Link>
           </div>

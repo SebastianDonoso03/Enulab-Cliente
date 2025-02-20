@@ -25,8 +25,7 @@ const Reservations = () => {
     hour: "",
     numcontact: "",
     guests: "",
-    note: "",
-    code: ""
+    note: ""
   })
 
   const handleChange = (e) => {
@@ -40,18 +39,17 @@ const Reservations = () => {
       console.error("No se puede crear sin la ID del restaurante");
       return;
     }
-    const randomCode = Math.random().toString(36).substring(2, 12).toUpperCase();
-    const newFormData = { ...formData, code: randomCode };
-    console.log("Datos enviados al backend:", newFormData);
-    for (const key in newFormData) {
-      if (!newFormData[key]) {
+    
+    console.log("Datos enviados al backend:", formData);
+    for (const key in formData) {
+      if (!formData[key]) {
         console.error(`El campo ${key} está vacío`);
         return;
       }
     }
 
     try {
-      const createdReserve = await createReserve(restaurantId, newFormData);
+      const createdReserve = await createReserve(restaurantId, formData);
       console.log("Reserva creada", createdReserve);
       navigate("/restaurant");
     } catch (error) {

@@ -92,8 +92,8 @@ const Dashboard = () => {
               restaurantes.map((rest) => (
                 <div key={rest.id} className="bg-white p-4 shadow-lg">
                   <img
-                    src={"../images/logo.png"}
-                    alt="ZUUZ"
+                    src={`http://localhost:4200/img/usuario/${rest.logo}`}
+                    alt="enulab"
                     className="w-full h-48 object-cover rounded-md"
                   />
                     <h3 className="mt-2 font-bold">{rest.name}</h3>
