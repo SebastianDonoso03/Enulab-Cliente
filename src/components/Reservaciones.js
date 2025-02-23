@@ -1,86 +1,126 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { createReserve } from '../services/reserveService'
+import { Link, useNavigate } from "react-router-dom";
+import { createReserve } from "../services/reserveService";
+import { Form, Input, Button, DatePicker, TimePicker, Card } from "antd";
+import EnuLaba1 from "../images/EnuLaba 1.png";
 
 const Reservations = () => {
-
-  const navigate = useNavigate()
-  const [restaurantId, setRestaurantId] = useState(null)
+  const navigate = useNavigate();
+  const [restaurantId, setRestaurantId] = useState(null);
 
   useEffect(() => {
-    const storedRestaurantId = localStorage.getItem("selectedRestaurantId")
-    console.log("ID del restaurante", storedRestaurantId)
-    
-    if(storedRestaurantId){
-      setRestaurantId(storedRestaurantId)
+    const storedRestaurantId = localStorage.getItem("selectedRestaurantId");
+    if (storedRestaurantId) {
+      setRestaurantId(storedRestaurantId);
     } else {
-      console.error('No se encontro el restauranteId')
-      navigate('/')
+      console.error("No se encontró el restauranteId");
+      navigate("/");
     }
-  }, [navigate])
+  }, [navigate]);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    date: "",
-    hour: "",
-    numcontact: "",
-    guests: "",
-    note: "",
-    code: ""
-  })
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onFinish = async (values) => {
     if (!restaurantId) {
       console.error("No se puede crear sin la ID del restaurante");
       return;
     }
-    const randomCode = Math.random().toString(36).substring(2, 12).toUpperCase();
-    const newFormData = { ...formData, code: randomCode };
-    console.log("Datos enviados al backend:", newFormData);
-    for (const key in newFormData) {
-      if (!newFormData[key]) {
-        console.error(`El campo ${key} está vacío`);
-        return;
-      }
-    }
+
+    const randomCode = Math.random()
+      .toString(36)
+      .substring(2, 12)
+      .toUpperCase();
+    const newFormData = { ...values, code: randomCode };
 
     try {
-      const createdReserve = await createReserve(restaurantId, newFormData);
-      console.log("Reserva creada", createdReserve);
+      await createReserve(restaurantId, newFormData);
       navigate("/restaurant");
     } catch (error) {
-      console.error("Error al crear la reserva", error.response?.data || error.message);
+      console.error(
+        "Error al crear la reserva",
+        error.response?.data || error.message
+      );
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-6">
-      <h2 className="text-2xl font-bold text-center mb-4">📅 Reservaciones</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <p>Nombre Completo</p>
-          <input type="text" name="name" placeholder="Nombre completo" onChange={handleChange} />
-          <p>Fecha</p>
-          <input name="date" type="date" onChange={handleChange} />
-          <p>Hora</p>
-          <input name="hour" type="time" onChange={handleChange} />
-          <p>Telefono</p>
-          <input name="numcontact" placeholder="Teléfono" onChange={handleChange} />
-          <p>Numero de personas</p>
-          <input name="guests" type="number" min={1} onChange={handleChange} />
-          <p>Notas</p>
-          <input name="note" placeholder="Notas adicionales" onChange={handleChange} /> <br></br>
-          <button type="submit">
-            Confirmar Reserva
-          </button>
+    <div className="min-h-screen bg-[#EAEAEA]">
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full bg-[#9D9D9D] z-50 py-4 px-6 flex justify-between items-center">
+        <Link
+          to="/"
+          className="text-gray-700 hover:text-gray-900 font-semibold"
+        >
+          <img src={EnuLaba1} alt="Logo" className="h-10" />
+        </Link>
+        <div className="space-x-6">
+          <Link to="/restaurant" className="text-white font-semibold">
+            Menú
+          </Link>
+          <Link
+            to="/reserva"
+            className="text-white hover:text-white font-semibold"
+          >
+            Reservaciones
+          </Link>
+          <Link
+            to="/comentario"
+            className="text-white hover:text-white font-semibold"
+          >
+            Comentarios
+          </Link>
+        </div>
+      </nav>
+
+      {/* Formulario de Reserva */}
+      <div className="pt-24 pb-8 flex justify-center items-center min-h-screen">
+        <Card className="w-full max-w-lg p-6 shadow-lg">
+          <h2 className="text-2xl font-bold text-center mb-4">
+            📅 Reservaciones
+          </h2>
+          <Form layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Nombre Completo"
+              name="name"
+              rules={[{ required: true, message: "Campo obligatorio" }]}
+            >
+              <Input placeholder="Ingrese su nombre" />
+            </Form.Item>
+            <Form.Item
+              label="Fecha"
+              name="date"
+              rules={[{ required: true, message: "Campo obligatorio" }]}
+            >
+              <DatePicker className="w-full" />
+            </Form.Item>
+            <Form.Item
+              label="Hora"
+              name="hour"
+              rules={[{ required: true, message: "Campo obligatorio" }]}
+            >
+              <TimePicker className="w-full" format="HH:mm" />
+            </Form.Item>
+            <Form.Item
+              label="Teléfono"
+              name="numcontact"
+              rules={[{ required: true, message: "Campo obligatorio" }]}
+            >
+              <Input placeholder="Número de contacto" />
+            </Form.Item>
+            <Form.Item
+              label="Número de personas"
+              name="guests"
+              rules={[{ required: true, message: "Campo obligatorio" }]}
+            >
+              <Input type="number" min={1} />
+            </Form.Item>
+            <Form.Item label="Notas adicionales" name="note">
+              <Input.TextArea placeholder="Escriba cualquier requerimiento especial" />
+            </Form.Item>
+            <Button type="primary" htmlType="submit" className="w-full">
+              Confirmar Reserva
+            </Button>
+          </Form>
+        </Card>
       </div>
-      </form>
     </div>
   );
 };
