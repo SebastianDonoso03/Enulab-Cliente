@@ -1,35 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import { getPlatos } from '../services/platosService';
+import { getDishes } from '../services/platosService';
 
 const Platos = () => {
-const menuId = localStorage.getItem('menuId');
+//const menuId = localStorage.getItem('menuId');
 const [platos, setPlatos] = useState([]);
+const menuId = localStorage.getItem("selectedMenuId");
 
 useEffect(() => {
     const fetchPlatos = async () => {
-        try {
-            const platosData = await getPlatos(menuId);
-            setPlatos(platosData);
-        } catch (error) {
-            console.error('Error al cargar los platos:', error);
+        if(menuId){
+          try {
+            const platosData = await getDishes(menuId)
+            setPlatos(platosData)
+          } catch (error) {
+            console.log('Error al cargar los platos:', error)
+          }
         }
     };
     fetchPlatos();
 }, [menuId]);
 
   return (
-    <div className="menu-container">
-          <h2 className="menu-title">Menú</h2>
-          <div className="platos-list">
+    <table className="table table-dark table-hover text-center">
+          <thead>
+            <tr className="text-warning">
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
             {platos.map((plato) => (
-              <div key={plato.id} className="plato-item">
-                <h3 className="plato-nombre">{plato.nombre}</h3>
-                <p className="plato-descripcion">{plato.descripcion}</p>
-              </div>
+              <tr key={plato.id}>
+                <td>{plato.name}</td>
+                <td>{plato.description}</td>
+                <td>{plato.price}</td>
+              </tr>
             ))}
-          </div>
-        </div>
-    
+          </tbody>
+        </table>
   )
 }
 
