@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createComment } from "../services/comentarioService";
+import Swal from 'sweetalert2'; // Importar SweetAlert2
 
 const Comments = () => {
   const navigate = useNavigate();
@@ -41,7 +42,11 @@ const Comments = () => {
 
     for (const key in formData) {
       if (!formData[key]) {
-        console.error(`El campo ${key} está vacío`);
+        // Mostrar alerta con SweetAlert2 en español
+        Swal.fire({
+          title: 'Campo vacío',
+          text: `Procura llenar todos los campos del formulario`  // Primera letra en mayúscula
+        });
         return;
       }
     }

@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getMenu } from '../services/menuService.js'
+import { getMenu } from '../services/menuService.js';
+import { getDishes } from '../services/platosService.js';
 
 const RestaurantMenu = () => {
   const restaurantId = localStorage.getItem("selectedRestaurantId");
-/*   const [selectedMenu, setSelectedMenu] = useState(null);
-  const [showModal, setShowModal] = useState(false); */
-  const [menus, setMenus] = useState([]);
-  
+  const menusId = localStorage.getItem("selectedRestaurantId");
+  const [menus, setMenus] = useState({ menusData: [], dishesData: [] });
+
   useEffect(() => {
     const fetchMenus = async () => {
       try {
         const menusData = await getMenu(restaurantId);
-        setMenus(menusData);
+        const dishesData = await getDishes(menusId);
+        
+        // Opción 1: Combinar los datos en un objeto
+        setMenus({ menusData, dishesData });
       } catch (error) {
         console.error("Error al cargar los menús:", error);
       }
     };
     fetchMenus();
-  }, [restaurantId]);
-
-
+  }, [restaurantId, menusId]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -47,19 +48,30 @@ const RestaurantMenu = () => {
 
       {/* Contenido Principal */}
       <div className="pt-24 text-center">
-        <h1 className="text-4xl font-bold text-gray-800">Aqui va el menu</h1>
+        <h1 className="text-4xl font-bold text-gray-800">Aquí va el menú</h1>
         {/* Menú */}
-        <br></br>
-        {menus.map((menu) => (
-        <div className="menu-item d-flex mb-3" key={menu.id}>
-          <div className="menu-description flex-grow-1">
-            <h3>{menu.name}</h3>
-            <p>{menu.description}</p>
+        <br />
+        {menus.menusData && menus.menusData.length > 0 && (
+          <div>
+            {menus.menusData.map((menu) => (
+              <div className="menu-item d-flex mb-3" key={menu.id}>
+                <div className="menu-description flex-grow-1">
+                  <h3>{menu.name}</h3>
+                  <p>{menu.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
+        )}
+{/*         <button
+                    className="btn btn-info btn-sm"
+                    onClick={() => handleManage(menu.id)}
+                  >
+                    <i className="bi bi-people"></i> Gestionar
+                  </button> */}
       </div>
     </div>
   );
 };
+
 export default RestaurantMenu;
