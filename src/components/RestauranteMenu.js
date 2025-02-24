@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Card } from "antd";
 import { getMenu } from "../services/menuService.js";
-import EnuLab3 from "../images/EnuLab3.png";
+import EnuLaba1 from "../images/EnuLaba 1.png";
 
 const { Meta } = Card;
 
@@ -33,16 +33,16 @@ const RestaurantMenu = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#EAEAEA]">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full bg-[#9D9D9D] z-50">
+      <nav className="fixed top-0 w-full bg-[#9D9D9D] ">
         <div className="container mx-auto flex justify-between items-center py-4 px-6">
           <Link
             to="/"
             className="text-gray-700 hover:text-gray-900 font-semibold"
           >
-            <img src={EnuLab3} alt="Logo" className="h-10" />
+            <img src={EnuLaba1} alt="Logo" className="h-10" />
           </Link>
           <div className="space-x-6">
-            <Link className="text-white font-semibold">Menú</Link>
+            <Link className="text-white font-semibold">Menús</Link>
             <Link
               to="/reserva"
               className="text-white hover:text-white font-semibold"
@@ -68,17 +68,19 @@ const RestaurantMenu = () => {
 
         {/* Grid de Menús */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {menus.map((menu) => (
-          <Card key={menu.id} hoverable className="shadow-lg rounded-lg">
+        { menus.map((menu) => (
+         <Card key={menu.id} hoverable className="shadow-lg rounded-lg">
             <Meta title={menu.name} description={menu.description} />
-            <Button
-                  type="primary"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
-                    onClick={() => handleManage(menu.id)}
-                    ><i className="bi bi-people"></i> Gestionar
-            </Button>
-          </Card>
-  ))}
+            <div className="mt-4">
+              <Button
+                type="primary"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+                onClick={() => handleManage(menu.id)}
+              >
+                <i className="bi bi-people"></i> Visualizar platos
+              </Button>
+            </div>
+          </Card>  ))}
         </div>
       </div>
 

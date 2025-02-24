@@ -53,7 +53,7 @@ const Reservations = () => {
         </Link>
         <div className="space-x-6">
           <Link to="/restaurant" className="text-white font-semibold">
-            Menú
+            Menús
           </Link>
           <Link
             to="/reserva"
@@ -121,6 +121,13 @@ const Reservations = () => {
           </Form>
         </Card>
       </div>
+      <footer className=" py-6 shadow-md mt-auto">
+        <div className="container mx-auto text-center">
+          <h3 className="text-lg font-semibold">🕒 Horarios de Atención</h3>
+          <p>Lunes a Viernes: 10:00 AM - 10:00 PM</p>
+          <p>Sábados y Domingos: 12:00 PM - 11:00 PM</p>
+        </div>
+      </footer>
     </div>
   );
 };

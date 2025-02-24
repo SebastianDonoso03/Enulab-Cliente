@@ -48,7 +48,7 @@ const Comments = () => {
         <div className="space-x-6">
           <Link 
           to="/restaurant"
-          className="text-white font-semibold">Menú</Link>
+          className="text-white font-semibold">Menús</Link>
           <Link
             to="/reserva"
             className="text-white hover:text-white font-semibold"
