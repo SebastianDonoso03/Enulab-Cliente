@@ -101,6 +101,9 @@ const Reservations = () => {
           </Form>
         </Card>
       </div>
+      <footer className="py-6 bg-gray-900 text-white text-center">
+        <p>© 2025 Enulab. Todos los derechos reservados.</p>
+      </footer>
     </div>
   );
 };
