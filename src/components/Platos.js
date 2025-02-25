@@ -25,7 +25,7 @@ const Platos = () => {
   const categorias = [...new Set(platos.map((plato) => plato.category))];
 
   return (
-    <div className="min-h-screen bg-[#EAEAEA]">
+    <div className="min-h-screen bg-[#EAEAEA] flex flex-col">
       {/* Navbar */}
       <nav className="fixed top-0 w-full bg-[#9D9D9D] z-50 py-4 px-6 flex justify-between items-center">
         <Link
@@ -54,8 +54,11 @@ const Platos = () => {
       </nav>
 
       {/* Contenido */}
-      <div className="pt-24 px-6 max-w-5xl mx-auto">
-        <Link to="/restaurant" className="flex items-center text-gray-600 hover:text-gray-900 mb-6">
+      <div className="pt-24 px-6 max-w-5xl mx-auto flex-grow">
+        <Link
+          to="/restaurant"
+          className="flex items-center text-gray-600 hover:text-gray-900 mb-6"
+        >
           <span className="text-2xl mr-2">←</span>
           <span className="font-semibold">Volver a los menús</span>
         </Link>
@@ -89,9 +92,10 @@ const Platos = () => {
           </div>
         ))}
       </div>
+      <footer className="mt-auto py-6 bg-gray-900 text-white text-center">
+        <p>© 2025 Enulab. Todos los derechos reservados.</p>
+      </footer>
     </div>
   );
 };
-
-
 export default Platos;

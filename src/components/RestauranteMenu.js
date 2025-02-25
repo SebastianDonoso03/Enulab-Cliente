@@ -85,12 +85,8 @@ const RestaurantMenu = () => {
       </div>
 
       {/* Footer con Horarios */}
-      <footer className=" py-6 shadow-md mt-auto">
-        <div className="container mx-auto text-center">
-          <h3 className="text-lg font-semibold">🕒 Horarios de Atención</h3>
-          <p>Lunes a Viernes: 10:00 AM - 10:00 PM</p>
-          <p>Sábados y Domingos: 12:00 PM - 11:00 PM</p>
-        </div>
+      <footer className="py-6 bg-gray-900 text-white text-center">
+        <p>© 2025 Enulab. Todos los derechos reservados.</p>
       </footer>
     </div>
   );
